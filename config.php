@@ -10,4 +10,3 @@
                                'admin,course_list:news_items,calendar_month,calendar_upcoming,'.
                                'recent_activity';
 //
-?>
