@@ -47,6 +47,17 @@ function callback_sections_load_content(&$navigation, $course, $coursenode) {
     return $navigation->load_generic_course_sections($course, $coursenode, 'sections');
 }
 
+
+function callback_sections_get_section_name($course, $section) {
+    // We can't add a node without any text
+    if (!empty($section->name)) {
+        return $section->name;
+    } else if ($section->section == 0) {
+        return get_string('section0name', 'format_sections');
+    } else {
+        return get_string('section').' '.$section->section;
+    }
+}
 /**
  * The string that is used to describe a section of the course
  * e.g. Topic, Week...
