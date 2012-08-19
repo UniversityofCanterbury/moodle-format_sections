@@ -44,9 +44,11 @@ if (!empty($home)) {
 
 
 if ($topic != -1) {
-    $displaysection = course_set_display($course->id, $topic);
+    course_set_display($course->id, $topic);
+    $displaysection = $topic;
 } else {
-    $displaysection = course_set_display($course->id, 0);
+    course_set_display($course->id, 0);
+    $displaysection = 0;
 }
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
