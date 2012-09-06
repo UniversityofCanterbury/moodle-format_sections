@@ -50,3 +50,6 @@ if ($displaysection == -2) {
 } else {
     $renderer->print_course_home_page($course, $sections, $mods, $modnames, $modnamesused);
 }
+
+// Include course format js module
+$PAGE->requires->js('/course/format/sections/format.js');
