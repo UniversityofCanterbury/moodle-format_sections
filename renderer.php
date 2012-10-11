@@ -116,7 +116,7 @@ class format_sections_renderer extends format_section_renderer_base {
      * @param int $displaysection The section number in the course which is being displayed
      */
     public function print_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection) {
-        global $PAGE;
+        global $PAGE, $DB;
 
         // Can we view the section in question?
         $context = context_course::instance($course->id);
@@ -143,6 +143,12 @@ class format_sections_renderer extends format_section_renderer_base {
 
         // Start single-section div
         echo html_writer::start_tag('div', array('class' => 'single-section'));
+
+        // Enforce multi-page setting
+        if ($course->coursedisplay !== COURSE_DISPLAY_MULTIPAGE) {
+            $course->coursedisplay = COURSE_DISPLAY_MULTIPAGE;
+            $DB->update_record('course', $course);
+        }
 
         // Title with section navigation links.
         $sectionnavlinks = $this->get_nav_links($course, $sections, $displaysection);
