@@ -122,6 +122,8 @@ class format_sections_renderer extends format_section_renderer_base {
         $context = context_course::instance($course->id);
         $canviewhidden = has_capability('moodle/course:viewhiddensections', $context);
 
+        $course = course_get_format($course)->get_course();
+
         if (!isset($sections[$displaysection])) {
             // This section doesn't exist
             print_error('unknowncoursesection', 'error', null, $course->fullname);
