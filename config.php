@@ -7,6 +7,6 @@
 //
 // The default blocks layout for this course format:
     $format['defaultblocks'] = 'menu_site_and_course,activity_modules,search_forums,'.
-                               'course_list:news_items,calendar_month,calendar_upcoming,'.
+                               'calendar_month,calendar_upcoming,'.
                                'recent_activity';
 //
