@@ -161,18 +161,13 @@ class format_sections extends format_base {
     /**
      * Returns the list of blocks to be automatically added for the newly created course
      *
-     * This function checks the existence of the file config.php in the course format folder.
-     * If file exists and contains the code
-     * $format['defaultblocks'] = 'leftblock1,leftblock2:rightblock1,rightblock2';
-     * these blocks are used, otherwise parent function is called
-     *
      * @return array of default blocks, must contain two keys BLOCK_POS_LEFT and BLOCK_POS_RIGHT
      *     each of values is an array of block names (for left and right side columns)
      */
     public function get_default_blocks() {
         return array(
             BLOCK_POS_LEFT => array('menu_site_and_course', 'activity_modules'),
-            BLOCK_POS_RIGHT => array('search_forums', 'course_list:news_items', 'calendar_month', 'calendar_upcoming', 'recent_activity')
+            BLOCK_POS_RIGHT => array('search_forums', 'calendar_month', 'calendar_upcoming', 'recent_activity')
         );
     }
 

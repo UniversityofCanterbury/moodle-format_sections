@@ -117,6 +117,7 @@ class format_sections_renderer extends format_section_renderer_base {
      */
     public function print_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection) {
         global $PAGE, $DB;
+        $courserenderer = $this->page->get_renderer('core', 'course');
 
         // Can we view the section in question?
         $context = context_course::instance($course->id);
@@ -177,15 +178,15 @@ class format_sections_renderer extends format_section_renderer_base {
         $completioninfo = new completion_info($course);
         echo $completioninfo->display_help_icon();
 
-        print_section($course, $thissection, $mods, $modnamesused, true, '100%', false, $displaysection);
+        echo $courserenderer->course_section_cm_list($course, $thissection);
         if ($PAGE->user_is_editing()) {
-            print_section_add_menus($course, $displaysection, $modnames, false, false, $displaysection);
+            echo $courserenderer->course_section_add_cm_control($course, $displaysection, $displaysection, array('inblock' => false));
         }
         echo $this->section_footer();
         echo $this->end_section_list();
 
         // Display section bottom navigation.
-        $courselink = html_writer::link(course_get_url($course).'&home=1', get_string('returntomaincoursepage'));
+        $courselink = html_writer::link(course_get_url($course).'&home=1', get_string('returntomaincoursepage', 'format_sections'));
         $sectionbottomnav = '';
         $sectionbottomnav .= html_writer::start_tag('div', array('class' => 'section-navigation mdl-bottom'));
         $sectionbottomnav .= html_writer::tag('span', $sectionnavlinks['previous'], array('class' => 'mdl-left'));
@@ -209,6 +210,7 @@ class format_sections_renderer extends format_section_renderer_base {
      */
     public function print_course_home_page($course, $sections, $mods, $modnames, $modnamesused) {
         global $PAGE, $USER, $SESSION, $CFG;
+        $courserenderer = $this->page->get_renderer('core', 'course');
 
         $context = context_course::instance($course->id);
         // Title with completion help icon.
@@ -236,13 +238,13 @@ class format_sections_renderer extends format_section_renderer_base {
 
         if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing()) {
             echo $this->section_header($thissection, $course, false);
-            print_section($course, $thissection, $mods, $modnamesused, true);
+            echo $courserenderer->course_section_cm_list($course, $thissection);
             if ($PAGE->user_is_editing()) {
-                print_section_add_menus($course, 0, $modnames);
+                echo $courserenderer->course_section_add_cm_control($course, 0, 0);
             }
             echo $this->section_footer();
         }
-        
+
         echo $this->end_section_list();
 
         require_once($CFG->dirroot . '/mod/forum/lib.php');
