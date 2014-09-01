@@ -210,6 +210,7 @@ class format_sections_renderer extends format_section_renderer_base {
      */
     public function print_course_home_page($course, $sections, $mods, $modnames, $modnamesused) {
         global $PAGE, $USER, $SESSION, $CFG;
+        require_once($CFG->dirroot . '/mod/forum/lib.php');
         $courserenderer = $this->page->get_renderer('core', 'course');
 
         $context = context_course::instance($course->id);
@@ -246,8 +247,6 @@ class format_sections_renderer extends format_section_renderer_base {
         }
 
         echo $this->end_section_list();
-
-        require_once($CFG->dirroot . '/mod/forum/lib.php');
 
         if (!$newsforum) {
             error('Could not find or create a main news forum for the site');
