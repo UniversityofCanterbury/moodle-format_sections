@@ -60,21 +60,17 @@ class format_sections_renderer extends format_section_renderer_base {
     }
 
     /**
-     * Generate the edit controls of a section
+     * Generate the edit control items of a section
      *
      * @param stdClass $course The course entry from DB
      * @param stdClass $section The course_section entry from DB
      * @param bool $onsectionpage true if being printed on a section page
-     * @return array of links with edit controls
+     * @return array of edit control items
      */
-    protected function section_edit_controls($course, $section, $onsectionpage = false) {
+    protected function section_edit_control_items($course, $section, $onsectionpage = false) {
         global $PAGE;
 
         if (!$PAGE->user_is_editing()) {
-            return array();
-        }
-
-        if (!has_capability('moodle/course:update', context_course::instance($course->id))) {
             return array();
         }
 
@@ -86,117 +82,30 @@ class format_sections_renderer extends format_section_renderer_base {
         $url->param('sesskey', sesskey());
 
         $controls = array();
-        if ($course->marker == $section->section) {  // Show the "light globe" on/off.
-            $url->param('marker', 0);
-            $controls[] = html_writer::link($url,
-                                html_writer::empty_tag('img', array('src' => $this->output->pix_url('i/marked'),
-                                    'class' => 'icon ', 'alt' => get_string('markedthistopic'))),
-                                array('title' => get_string('markedthistopic'), 'class' => 'editing_highlight'));
-        } else {
-            $url->param('marker', $section->section);
-            $controls[] = html_writer::link($url,
-                            html_writer::empty_tag('img', array('src' => $this->output->pix_url('i/marker'),
-                                'class' => 'icon', 'alt' => get_string('markthistopic'))),
-                            array('title' => get_string('markthistopic'), 'class' => 'editing_highlight'));
-        }
 
-        return array_merge($controls, parent::section_edit_controls($course, $section, $onsectionpage));
-    }
-
-
-
-    /**
-     * Output the html for a single section page .
-     *
-     * @param stdClass $course The course entry from DB
-     * @param array $sections The course_sections entries from the DB
-     * @param array $mods used for print_section()
-     * @param array $modnames used for print_section()
-     * @param array $modnamesused used for print_section()
-     * @param int $displaysection The section number in the course which is being displayed
-     */
-    public function print_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection) {
-        global $PAGE, $DB;
-        $courserenderer = $this->page->get_renderer('core', 'course');
-
-        // Can we view the section in question?
-        $context = context_course::instance($course->id);
-        $canviewhidden = has_capability('moodle/course:viewhiddensections', $context);
-
-        $course = course_get_format($course)->get_course();
-
-        if (!isset($sections[$displaysection])) {
-            // This section doesn't exist
-            print_error('unknowncoursesection', 'error', null, $course->fullname);
-            return;
-        }
-
-        if (!$sections[$displaysection]->visible && !$canviewhidden) {
-            if (!$course->hiddensections) {
-                echo $this->start_section_list();
-                echo $this->section_hidden($displaysection);
-                echo $this->end_section_list();
+        if ($section->section) {
+            if ($course->marker == $section->section) {  // Show the "light globe" on/off.
+                $url->param('marker', 0);
+                $strmarkedthistopic = get_string('highlightoff');
+                $controls['highlight'] = array(
+                    'url' => $url,
+                    'icon' => 'i/marked',
+                    'name' => $strmarkedthistopic,
+                    'pixattr' => array('class' => '', 'alt' => $strmarkedthistopic),
+                    'attr' => array('class' => 'icon editing_highlight', 'title' => $strmarkedthistopic));
+            } else {
+                $url->param('marker', $section->section);
+                $strmarkthistopic = get_string('highlight');
+                $controls['highlight'] = array(
+                    'url' => $url,
+                    'icon' => 'i/marker',
+                    'name' => $strmarkthistopic,
+                    'pixattr' => array('class' => '', 'alt' => $strmarkthistopic),
+                    'attr' => array('class' => 'icon editing_highlight', 'title' => $strmarkthistopic));
             }
-            // Can't view this section.
-            return;
         }
 
-        // Copy activity clipboard..
-        echo $this->course_activity_clipboard($course, $displaysection);
-
-        // Start single-section div
-        echo html_writer::start_tag('div', array('class' => 'single-section'));
-
-        // Enforce multi-page setting
-        if ($course->coursedisplay !== COURSE_DISPLAY_MULTIPAGE) {
-            $course->coursedisplay = COURSE_DISPLAY_MULTIPAGE;
-            $DB->update_record('course', $course);
-        }
-
-        // Title with section navigation links.
-        $sectionnavlinks = $this->get_nav_links($course, $sections, $displaysection);
-        $sectiontitle = '';
-        $sectiontitle .= html_writer::start_tag('div', array('class' => 'section-navigation header headingblock'));
-        $sectiontitle .= html_writer::tag('span', $sectionnavlinks['previous'], array('class' => 'mdl-left'));
-        $sectiontitle .= html_writer::tag('span', $sectionnavlinks['next'], array('class' => 'mdl-right'));
-        // Title attributes
-        $titleattr = 'mdl-align title';
-        if (!$sections[$displaysection]->visible) {
-            $titleattr .= ' dimmed_text';
-        }
-        $sectiontitle .= html_writer::tag('div', get_section_name($course, $sections[$displaysection]), array('class' => $titleattr));
-        $sectiontitle .= html_writer::end_tag('div');
-        echo $sectiontitle;
-
-        // Now the list of sections..
-        echo $this->start_section_list();
-
-        // The requested section page.
-        $thissection = $sections[$displaysection];
-        echo $this->section_header($thissection, $course, true, $displaysection);
-        // Show completion help icon.
-        $completioninfo = new completion_info($course);
-        echo $completioninfo->display_help_icon();
-
-        echo $courserenderer->course_section_cm_list($course, $thissection);
-        if ($PAGE->user_is_editing()) {
-            echo $courserenderer->course_section_add_cm_control($course, $displaysection, $displaysection, array('inblock' => false));
-        }
-        echo $this->section_footer();
-        echo $this->end_section_list();
-
-        // Display section bottom navigation.
-        $courselink = html_writer::link(course_get_url($course).'&home=1', get_string('returntomaincoursepage', 'format_sections'));
-        $sectionbottomnav = '';
-        $sectionbottomnav .= html_writer::start_tag('div', array('class' => 'section-navigation mdl-bottom'));
-        $sectionbottomnav .= html_writer::tag('span', $sectionnavlinks['previous'], array('class' => 'mdl-left'));
-        $sectionbottomnav .= html_writer::tag('span', $sectionnavlinks['next'], array('class' => 'mdl-right'));
-        $sectionbottomnav .= html_writer::tag('div', $courselink, array('class' => 'mdl-align'));
-        $sectionbottomnav .= html_writer::end_tag('div');
-        echo $sectionbottomnav;
-
-        // close single-section div.
-        echo html_writer::end_tag('div');
+        return array_merge($controls, parent::section_edit_control_items($course, $section, $onsectionpage));
     }
 
     /**
@@ -211,9 +120,9 @@ class format_sections_renderer extends format_section_renderer_base {
     public function print_course_home_page($course, $sections, $mods, $modnames, $modnamesused) {
         global $PAGE, $USER, $SESSION, $CFG;
         require_once($CFG->dirroot . '/mod/forum/lib.php');
-        $courserenderer = $this->page->get_renderer('core', 'course');
 
-        $context = context_course::instance($course->id);
+        $modinfo = get_fast_modinfo($course);
+
         // Title with completion help icon.
         $completioninfo = new completion_info($course);
         echo $completioninfo->display_help_icon();
@@ -226,22 +135,16 @@ class format_sections_renderer extends format_section_renderer_base {
         echo $this->start_section_list();
 
         // General section if non-empty.
-        $thissection = $sections[0];
-        unset($sections[0]);
+        $thissection = $modinfo->get_section_info(0);
 
         //we want to get rid of the news forum link as news is displayed by default
         $newsforum = forum_get_course_forum($course->id, 'news');
-        foreach ($mods as $key => $value) {
-            if ($value->instance == $newsforum->id) {
-                $mods[$key] = '';
-            }
-        }
 
         if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing()) {
             echo $this->section_header($thissection, $course, false);
-            echo $courserenderer->course_section_cm_list($course, $thissection);
+            echo $this->courserenderer->course_section_cm_list($course, $thissection);
             if ($PAGE->user_is_editing()) {
-                echo $courserenderer->course_section_add_cm_control($course, 0, 0);
+                echo $this->courserenderer->course_section_add_cm_control($course, 0, 0);
             }
             echo $this->section_footer();
         }
@@ -252,18 +155,9 @@ class format_sections_renderer extends format_section_renderer_base {
             error('Could not find or create a main news forum for the site');
         }
 
-        if (!empty($USER->id)) {
-            $SESSION->fromdiscussion = $CFG->wwwroot;
-            if (forum_is_subscribed($USER->id, $newsforum->id)) {
-                $subtext = get_string('unsubscribe', 'forum');
-            } else {
-                $subtext = get_string('subscribe', 'forum');
-            }
-            echo '<h2>News</h2>';
-        }
+        echo '<h2>News</h2>';
         $SESSION->fromdiscussion = "{$CFG->wwwroot}/course/view.php?id={$course->id}";
 
-        $news = forum_print_latest_discussions($course, $newsforum, $course->newsitems, 'plain', 'p.modified DESC');
-        $news = str_replace("Add a new topic", '', $news);
+        forum_print_latest_discussions($course, $newsforum, $course->newsitems, 'plain', 'p.modified DESC');
     }
 }

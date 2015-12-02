@@ -50,11 +50,11 @@ $renderer = $PAGE->get_renderer('format_sections');
 if ($displaysection == -2) {
     // For some reason, this seems to insist on coming through as COURSE_DISPLAY_MULTIPAGE, which makes it only show the section summaries
     $course->coursedisplay = COURSE_DISPLAY_SINGLEPAGE;
-    $renderer->print_multiple_section_page($course, $sections, $mods, $modnames, $modnamesused);
+    $renderer->print_multiple_section_page($course, null, null, null, null);
 } elseif (!empty($displaysection)) {
-    $renderer->print_single_section_page($course, $sections, $mods, $modnames, $modnamesused, $displaysection);
+    $renderer->print_single_section_page($course, null, null, null, null, $displaysection);
 } else {
-    $renderer->print_course_home_page($course, $sections, $mods, $modnames, $modnamesused);
+    $renderer->print_course_home_page($course, null, null, null, null, $modnamesused);
 }
 
 // Include course format js module
