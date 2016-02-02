@@ -22,6 +22,9 @@ if ($topic = optional_param('topic', 0, PARAM_INT)) {
 $course = course_get_format($course)->get_course();
 course_create_sections_if_missing($course, range(0, $course->numsections));
 
+// Enforce single section per page display.
+$course->coursedisplay = COURSE_DISPLAY_SINGLEPAGE;
+
 // Remember page for the duration of the session.
 $home = optional_param('home', 0, PARAM_INT);
 if (!empty($home)) {
@@ -48,8 +51,6 @@ if($section != -1) {
 $renderer = $PAGE->get_renderer('format_sections');
 
 if ($displaysection == -2) {
-    // For some reason, this seems to insist on coming through as COURSE_DISPLAY_MULTIPAGE, which makes it only show the section summaries
-    $course->coursedisplay = COURSE_DISPLAY_SINGLEPAGE;
     $renderer->print_multiple_section_page($course, null, null, null, null);
 } elseif (!empty($displaysection)) {
     $renderer->print_single_section_page($course, null, null, null, null, $displaysection);
