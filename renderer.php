@@ -116,49 +116,63 @@ class format_sections_renderer extends format_section_renderer_base {
      * @param array $modnames used for print_section()
      * @param array $modnamesused used for print_section()
      */
-    public function print_course_home_page($course, $sections, $mods, $modnames, $modnamesused) {
-        global $PAGE, $USER, $SESSION, $CFG;
-        require_once($CFG->dirroot . '/mod/forum/lib.php');
+ 
+	public function print_course_home_page($course, $sections, $mods, $modnames, $modnamesused) {
+		global $PAGE, $USER, $SESSION, $CFG;
 
-        $modinfo = get_fast_modinfo($course);
+		$pageno = optional_param('p', 0, PARAM_INT);
 
-        // Title with completion help icon.
-        $completioninfo = new completion_info($course);
-        echo $completioninfo->display_help_icon();
-        echo $this->output->heading($this->page_title(), 2, 'accesshide');
+		require_once($CFG->dirroot . '/mod/forum/lib.php');
 
-        // Copy activity clipboard..
-        echo $this->course_activity_clipboard($course);
+		$modinfo = get_fast_modinfo($course);
 
-        // Now the list of sections..
-        echo $this->start_section_list();
+		// Title with completion help icon.
+		$completioninfo = new completion_info($course);
+		echo $completioninfo->display_help_icon();
+		echo $this->output->heading($this->page_title(), 2, 'accesshide');
 
-        // General section if non-empty.
-        $thissection = $modinfo->get_section_info(0);
+		// Copy activity clipboard..
+		echo $this->course_activity_clipboard($course);
 
-        //we want to get rid of the news forum link as news is displayed by default
-        $newsforum = forum_get_course_forum($course->id, 'news');
+		// Now the list of sections..
+		echo $this->start_section_list();
 
-        if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing()) {
-            echo $this->section_header($thissection, $course, false);
-            echo $this->courserenderer->course_section_cm_list($course, $thissection);
-            if ($PAGE->user_is_editing()) {
-                echo $this->courserenderer->course_section_add_cm_control($course, 0, 0);
-            }
-            echo $this->section_footer();
-        }
+		// General section if non-empty.
+		$thissection = $modinfo->get_section_info(0);
 
-        echo $this->end_section_list();
+		if ($thissection->summary or $thissection->sequence or $PAGE->user_is_editing()) {
+			echo $this->section_header($thissection, $course, false);
+			echo $this->courserenderer->course_section_cm_list($course, $thissection);
+			if ($PAGE->user_is_editing()) {
+				echo $this->courserenderer->course_section_add_cm_control($course, 0, 0);
+			}
+			echo $this->section_footer();
+		}
 
-        if (!$newsforum) {
-            error('Could not find or create a main news forum for the site');
-        }
+		echo $this->end_section_list();
 
-        echo '<h2>News</h2>';
-        $SESSION->fromdiscussion = "{$CFG->wwwroot}/course/view.php?id={$course->id}";
+		echo '<h2>News</h2>';
 
-        forum_print_latest_discussions($course, $newsforum, $course->newsitems, 'plain', 'p.modified DESC');
-    }
+		$forum = forum_get_course_forum($course->id, 'news');
+		if (empty($forum)) {
+			echo $OUTPUT->notification('Could not find or create a news forum here');
+		}
+		
+		$coursemodule = get_coursemodule_from_instance('forum', $forum->id);
+		$modcontext = context_module::instance($coursemodule->id);
+		
+		$entityfactory = mod_forum\local\container::get_entity_factory();
+		$forumentity = $entityfactory->get_forum_from_stdclass($forum, $modcontext, $coursemodule, $course);
+	   
+		echo html_writer::div(forum_get_subscribe_link($forum, $modcontext), 'subscribelink');
+
+		$numdiscussions = $course->newsitems;
+		
+		$rendererfactory = mod_forum\local\container::get_renderer_factory();
+		$discussionsrenderer = $rendererfactory->get_social_discussion_list_renderer($forumentity);
+		$cm = \cm_info::create($coursemodule);
+		echo $discussionsrenderer->render($USER, $cm, null, null, $pageno, $numdiscussions);
+	}
 
     /**
      * Output the html for a single section page .
@@ -206,8 +220,9 @@ class format_sections_renderer extends format_section_renderer_base {
         $sectionnavlinks = $this->get_nav_links($course, $modinfo->get_section_info_all(), $displaysection);
         $sectiontitle = '';
         $sectiontitle .= html_writer::start_tag('div', array('class' => 'section-navigation navigationtitle'));
-        $sectiontitle .= html_writer::tag('span', $sectionnavlinks['previous'], array('class' => 'mdl-left'));
-        $sectiontitle .= html_writer::tag('span', $sectionnavlinks['next'], array('class' => 'mdl-right'));
+		//$sectiontitle .= html_writer::tag('span', $sectionnavlinks['previous'], array('class' => 'mdl-left'));
+		//$sectiontitle .= html_writer::tag('span', $sectionnavlinks['next'], array('class' => 'mdl-right'));
+		
         // Title attributes
         $classes = 'sectionname';
         if (!$thissection->visible) {

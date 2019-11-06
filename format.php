@@ -26,23 +26,14 @@ course_create_sections_if_missing($course, range(0, $course->numsections));
 // Enforce single section per page display.
 $course->coursedisplay = COURSE_DISPLAY_SINGLEPAGE;
 
-// Remember page for the duration of the session.
-$home = optional_param('home', 0, PARAM_INT);
-if (!empty($home)) {
-    $section = 0;
-    $_SESSION['current_topic_'.$course->id] = 0;
-} else {
-    $rawsection = optional_param('section', -1, PARAM_CLEAN);
-    if($rawsection == 'all') {
-        $section = -2;
-    } else {
-        $section = intval($rawsection);
-    }
-    if ($section == -1 && isset($_SESSION['current_topic_'.$course->id])) {
-        $section = $_SESSION['current_topic_'.$course->id];
-    } else {
-        $_SESSION['current_topic_'.$course->id] = $section;
-    }
+if (($marker >=0) && has_capability('moodle/course:setcurrentsection', $context) && confirm_sesskey()) {
+    $course->marker = $marker;
+    course_set_marker($course->id, $marker);
+}
+
+$rawsection = optional_param('section', -1, PARAM_CLEAN);
+if($rawsection == 'all') {
+    $section = -2;
 }
 
 if($section != -1) {
