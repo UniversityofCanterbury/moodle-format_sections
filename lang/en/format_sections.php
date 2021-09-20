@@ -8,3 +8,4 @@ $string['hidefromothers'] = 'Hide section';
 $string['showfromothers'] = 'Show section';
 $string['returntomaincoursepage'] = 'Return To Main Course Page';
 $string['currentsection'] = 'This section';
+$string['privacy:metadata'] = 'The Single Sections format plugin does not store any personal data.';
