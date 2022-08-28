@@ -7,7 +7,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/filelib.php');
-require_once($CFG->libdir . '/ajax/ajaxlib.php');
+//require_once($CFG->libdir . '/ajax/ajaxlib.php');
 require_once($CFG->libdir . '/completionlib.php');
 
 // Horrible backwards compatible parameter aliasing..
@@ -36,19 +36,27 @@ if($rawsection == 'all') {
     $section = -2;
 }
 
-if($section != -1) {
-    $displaysection = $section;
-}
+//if($section != -1) {
+//    $displaysection = $section;
+//}
 
 $renderer = $PAGE->get_renderer('format_sections');
 
-if ($displaysection == -2) {
-    $renderer->print_multiple_section_page($course, null, null, null, null);
+if ($section == -2) {
+    //$renderer->print_multiple_section_page($course, null, null, null, null);
+    $format->set_section_number($displaysection);
+
+    $outputclass = $format->get_output_classname('content');
+    $widget = new $outputclass($format);
+    echo $renderer->render($widget);
 } elseif (!empty($displaysection)) {
+//    $renderer->print_single_section_page($course, null, null, null, null, $displaysection);
     $renderer->print_single_section_page($course, null, null, null, null, $displaysection);
+
 } else {
     $renderer->print_course_home_page($course, null, null, null, null, $modnamesused);
 }
 
 // Include course format js module
 $PAGE->requires->js('/course/format/sections/format.js');
+$PAGE->requires->js_call_amd('core_course/sectionlistener');

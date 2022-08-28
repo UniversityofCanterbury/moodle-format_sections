@@ -13,29 +13,36 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
- * Privacy Subsystem implementation for format_sections.
+ * Privacy Subsystem implementation for Topics course format.
  *
- * @package    format_sections
- * @copyright  2021 Catalyst IT
+ * @package    format_topics
+ * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace format_sections\privacy;
+
+namespace format_topics\privacy;
+
 defined('MOODLE_INTERNAL') || die();
+
+use core_privacy\local\metadata\null_provider;
+
 /**
- * Privacy Subsystem for format_sections implementing null_provider.
+ * Privacy Subsystem for Topics course format implementing null_provider.
  *
- * @copyright  2012 Paul Nicholls
+ * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\null_provider {
+class provider implements null_provider {
+
     /**
      * Get the language string identifier with the component's language
      * file to explain why this plugin stores no data.
      *
      * @return  string
      */
-    public static function get_reason() : string {
+    public static function get_reason(): string {
         return 'privacy:metadata';
     }
 }
