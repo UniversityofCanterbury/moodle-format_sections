@@ -15,34 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy Subsystem implementation for Sections course format.
+ * Upgrade scripts for Sections course format.
  *
  * @package    format_sections
- * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
+ * @copyright  2017 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace format_sections\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
-use core_privacy\local\metadata\null_provider;
-
 /**
- * Privacy Subsystem for Sections course format implementing null_provider.
+ * Upgrade script for Sections course format.
  *
- * @copyright  2018 Carlos Escobedo <carlos@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @param int|float $oldversion the version we are upgrading from
+ * @return bool result
  */
-class provider implements null_provider {
+function xmldb_format_sections_upgrade($oldversion) {
+    global $CFG, $DB;
 
-    /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
-     *
-     * @return  string
-     */
-    public static function get_reason(): string {
-        return 'privacy:metadata';
-    }
+    // Automatically generated Moodle v3.9.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.0.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    return true;
 }

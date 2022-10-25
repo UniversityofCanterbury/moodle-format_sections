@@ -1,0 +1,19 @@
+.section-coursedisplaypref {
+    .coursedisplay_single {
+        display: block;
+    }
+
+    .coursedisplay_multi {
+        display: none;
+    }
+
+    &.multi {
+        .coursedisplay_single {
+            display: none;
+        }
+
+        .coursedisplay_multi {
+            display: block;
+        }
+    }
+}

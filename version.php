@@ -15,16 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Version details.
  *
- * @package    format
- * @subpackage sections
- * @copyright  2012 Paul Nicholls
+ * @package    format_sections
+ * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018062001;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2017111301;        // Requires this Moodle version.
+$plugin->version   = 2022041900;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2022041200;        // Requires this Moodle version.
 $plugin->component = 'format_sections';    // Full name of the plugin (used for diagnostics).
