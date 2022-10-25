@@ -94,7 +94,7 @@ class renderer extends section_renderer {
         }
 
         $rendererfactory = \mod_forum\local\container::get_renderer_factory();
-        $discussionsrenderer = $rendererfactory->get_discussion_list_renderer($forumentity);
+        $discussionsrenderer = $rendererfactory->get_social_discussion_list_renderer($forumentity);
         $cm = \cm_info::create($coursemodule);
         $html .= $discussionsrenderer->render($USER, $cm, null, null, $pageno, $numdiscussions, null, false);
 
