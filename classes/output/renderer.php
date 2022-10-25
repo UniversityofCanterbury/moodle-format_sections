@@ -67,7 +67,7 @@ class renderer extends section_renderer {
     /**
      * Function to display News forum on page.
      *
-     * @param stdClass $course
+     * @param \stdClass $course
      * @return void
      */
     public function display_forum($course) {
