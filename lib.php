@@ -51,7 +51,7 @@ class format_sections extends core_courseformat\base {
     }
 
     public function uses_indentation(): bool {
-        return false;
+        return true;
     }
 
     /**
