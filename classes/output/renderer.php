@@ -110,10 +110,10 @@ class renderer extends section_renderer {
     public function course_display_action_link($issinglesection, $course) {
 
         if ($issinglesection) {
-            $linkname = get_string('coursedisplay_single');
+            $linkname = get_string('coursedisplay_single','format_sections');
             $class = 'coursedisplay_single';
         } else {
-            $linkname = get_string('coursedisplay_multi');
+            $linkname = get_string('coursedisplay_multi','format_sections');
             $class = 'coursedisplay_multi multi';
         }
 
