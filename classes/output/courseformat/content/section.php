@@ -40,6 +40,16 @@ class section extends section_base {
     /** @var course_format the course format */
     protected $format;
 
+    /**
+     * Template name for this exporter
+     *
+     * @param \renderer_base $renderer
+     * @return string
+     */
+    public function get_template_name(\renderer_base $renderer): string {
+        return 'format_sections/local/content/section';
+    }
+
     public function export_for_template(\renderer_base $output): stdClass {
         global $PAGE;
 

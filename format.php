@@ -29,15 +29,6 @@ require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->dirroot.'/mod/forum/lib.php');
 
-// Horrible backwards compatible parameter aliasing.
-if ($section = optional_param('section', 0, PARAM_INT)) {
-    $url = $PAGE->url;
-    $url->param('section', $section);
-    debugging('Outdated section param passed to course/view.php', DEBUG_DEVELOPER);
-    redirect($url);
-}
-// End backwards-compatible aliasing.
-
 // Retrieve course format option fields and add them to the $course object.
 $format = course_get_format($course);
 $course = $format->get_course();
