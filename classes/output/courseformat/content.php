@@ -62,37 +62,11 @@ class content extends content_base {
     public function export_for_template(\renderer_base $output) {
         global $PAGE;
         $format = $this->format;
-
-        $sections = $this->export_sections($output);
         $options = $format->get_format_options();
-        $initialsection = '';
 
-        $data = (object)[
-            'title' => $format->page_title(), // This method should be in the course_format class.
-            'initialsection' => $initialsection,
-            'sections' => $sections,
-            'format' => $format->get_format(),
-            'sectionreturn' => 0,
-        ];
-
-        // The single section format has extra navigation.
-        if ($this->format->get_sectionid()) {
-            $singlesectionnum = $this->format->get_sectionnum();
-            if (!$PAGE->theme->usescourseindex) {
-                $sectionnavigation = new $this->sectionnavigationclass($format, $singlesectionnum);
-                $data->sectionnavigation = $sectionnavigation->export_for_template($output);
-
-                $sectionselector = new $this->sectionselectorclass($format, $sectionnavigation);
-                $data->sectionselector = $sectionselector->export_for_template($output);
-            }
-            $data->hasnavigation = true;
-            $data->singlesection = array_shift($data->sections);
-            $data->sectionreturn = $singlesectionnum;
-        }
-
+        $data = parent::export_for_template($output);
         $PAGE->requires->js_call_amd('format_sections/mutations', 'init');
         $PAGE->requires->js_call_amd('format_sections/section', 'init');
-        $data = parent::export_for_template($output);
 
         // Course layout 'Show one section per page' is selected.
         if(!empty($options['coursedisplay'])) {
