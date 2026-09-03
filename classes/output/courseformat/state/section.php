@@ -51,7 +51,8 @@ class section extends section_base {
         $options = $format->get_format_options();
 
         if (empty($options['coursedisplay'])) {
-            $data->sectionurl = '/course/view.php?id=' . $course->id . '#section-' . $data->section;
+            // Absolute URL: a root-relative path breaks when Moodle is installed in a subdirectory.
+            $data->sectionurl = (new \moodle_url('/course/view.php', ['id' => $course->id]))->out(false) . '#section-' . $data->section;
         }
 
         return $data;
